@@ -1,0 +1,23 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Environment secrets — NEVER commit this
+.env
+
+# ML model artifacts (large binary files — store in cloud storage or Git LFS)
+*.pkl
+
+# Large data files
+*.csv
+
+# OS files
+.DS_Store
+Thumbs.db
