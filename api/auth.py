@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Field, validator
 from services.email_service import email_service
 from services.redis_service import RedisService
@@ -63,6 +64,13 @@ async def verify(token: str, user_id: str):
     User clicked 'Yes, I'm In' from the email.
     We grant access to the workspace.
     """
+    # Check if already verified to handle browser double-fetches
+    session_status = redis_client.get_val(f"session:{user_id}")
+    frontend_url = "http://localhost:5173"  # Default frontend URL
+
+    if session_status == "ACTIVE":
+         return RedirectResponse(url=f"{frontend_url}/dashboard")
+
     # Verify the token belongs to the user
     saved_user = redis_client.get_val(f"token:{token}")
     
@@ -75,8 +83,8 @@ async def verify(token: str, user_id: str):
     # Clean up the single-use token
     redis_client.delete_val(f"token:{token}")
     
-    # In production, this would redirect the user to the React Workspace dashboard.
-    return {"message": f"Access Granted to Workspace for {user_id}. You may now continue."}
+    # Redirect the user to the React Workspace dashboard.
+    return RedirectResponse(url=f"{frontend_url}/dashboard")
 
 @router.get("/report_compromise/{token}")
 async def report_compromise(token: str, user_id: str):
@@ -98,3 +106,12 @@ async def report_compromise(token: str, user_id: str):
     await manager.send_termination(user_id)
     
     return {"message": f"SECURITY ALERT: Compromise Reported! All active sessions for {user_id} terminated."}
+
+@router.get("/status/{user_id}")
+async def check_status(user_id: str):
+    """
+    Frontend polling endpoint to see if the user has clicked the email link.
+    Returns 'ACTIVE' if they are verified.
+    """
+    session_status = redis_client.get_val(f"session:{user_id}")
+    return {"status": session_status or "PENDING"}

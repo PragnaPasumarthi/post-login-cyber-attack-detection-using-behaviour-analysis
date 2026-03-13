@@ -1,3 +1,4 @@
+import os
 import smtplib
 import uuid
 from email.message import EmailMessage
@@ -10,7 +11,7 @@ class EmailService:
         self.smtp_port = 587
         self.sender_email = settings.SMTP_EMAIL
         self.app_password = settings.SMTP_APP_PASSWORD
-        self.base_url = "http://localhost:8000"
+        self.base_url = os.getenv("BACKEND_URL", "http://localhost:8000")
 
     def send_verification_email(self, to_email: str, user_id: str):
         """Generates UUID tokens and sends the Yes/No verification email via Gmail SMTP."""

@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 
 from api.auth import router as auth_router
 from api.actions import router as actions_router
+from api.sales_data import router as sales_router
 from api.websocket import router as ws_router
 from ml.detector import AnomalyDetector
 from services.redis_service import RedisService
@@ -55,6 +56,7 @@ app.add_middleware(
 # Include Routers
 app.include_router(auth_router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(actions_router, prefix="/api/actions", tags=["User Actions"])
+app.include_router(sales_router, prefix="/api/sales", tags=["Sales Data"])
 app.include_router(ws_router, prefix="/ws", tags=["WebSockets"])
 
 @app.get("/")
