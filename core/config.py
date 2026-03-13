@@ -1,9 +1,11 @@
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    SENDGRID_API_KEY: str = "placeholder"   # Set in .env
+    # Gmail SMTP credentials (use an App Password from myaccount.google.com/apppasswords)
+    SMTP_EMAIL: str = "placeholder"
+    SMTP_APP_PASSWORD: str = "placeholder"
     REDIS_URL: str = "redis://localhost:6379/0"
-    MONGODB_URL: str = "mongodb://localhost:27017"
+    MONGO_URI: str = "placeholder"  # Set in .env (MongoDB Atlas connection string)
     JWT_SECRET: str = "super_secret_key"
 
     class Config:

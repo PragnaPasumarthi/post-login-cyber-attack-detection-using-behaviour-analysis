@@ -56,8 +56,8 @@ def generate_random_phone():
     return f"+91 {random.randint(6, 9)}{random.randint(1000, 9999)} {random.randint(10000, 99999)}"
 
 async def seed_database():
-    print(f"Connecting to MongoDB at {settings.MONGODB_URL}...")
-    client = AsyncIOMotorClient(settings.MONGODB_URL)
+    print(f"Connecting to MongoDB Atlas at {settings.MONGO_URI}...")
+    client = AsyncIOMotorClient(settings.MONGO_URI)
     db = client.threatsense_db
 
     print("Dropping existing collections for a fresh start...")

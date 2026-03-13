@@ -5,7 +5,7 @@ class MongoDBService:
     def __init__(self):
         self.client = None
         self.db = None
-        self.uri = settings.MONGODB_URL
+        self.uri = settings.MONGO_URI  # Loaded from MONGO_URI in .env (MongoDB Atlas)
 
     async def connect(self):
         """Initialize the MongoDB connection"""

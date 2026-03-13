@@ -6,14 +6,20 @@ from core.config import settings
 class RedisService:
     def __init__(self):
         try:
-            self.client = redis.from_url(settings.REDIS_URL, decode_responses=True)
-            self.client.ping() # Check if it's actually alive
+            # Auto-detects rediss:// (SSL) or redis:// (local) from REDIS_URL
+            ssl_enabled = settings.REDIS_URL.startswith("rediss://")
+            self.client = redis.from_url(
+                settings.REDIS_URL,
+                decode_responses=True,
+                ssl_cert_reqs=None if ssl_enabled else None  # Required for cloud providers (Upstash, Redis Cloud)
+            )
+            self.client.ping()  # Verify connection
             self.use_fake = False
             print("SUCCESS: Redis Connected Successfully.")
-        except Exception:
+        except Exception as e:
             self.use_fake = True
             self.fake_db = {}
-            print("WARNING: Redis not found. Using 'Fake Memory' (Internal Dictionary).")
+            print(f"WARNING: Redis not found ({e}). Using 'Fake Memory' (Internal Dictionary).")
             print("   (Data will be lost if you restart the server)")
 
         self.action_window_ttl = 3600 
